@@ -55,4 +55,28 @@ public class Node {
             }
         }
     }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 4 || args.length > 5) {
+            LOGGER.severe(() -> "Incorrect Arguments");
+            System.exit(0);
+        }
+        int arguments[] = new int[3];
+        for (int i = 0; i < 3; i++)
+            arguments[i] = Integer.parseInt(args[i]);
+
+        String data;
+        if (arguments[2] == -1)
+            data = "";
+        else
+            data = args[4];
+
+        Node node = new Node(arguments[0], arguments[1], arguments[2], data);
+        for (int i = 0; i < node.duration; i++) {
+            if (i % 30 == 0)
+                node.helloProtocol();
+            Thread.sleep(1000);
+            System.out.println("Node " + node.ID + " Done");
+        }
+    }
 }
