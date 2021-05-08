@@ -31,20 +31,20 @@ public class Controller {
         nodes.topologyLinks[sourceNode][destNode] = 1;
     }
 
-    public void createNodeChannels(){
+    public void createNodeChannels() {
         String line;
         BufferedReader reader = new BufferedReader(channel.input);
         try {
             while ((line = reader.readLine()) != null) {
                 parseString(line);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         nodes.createChannels();
     }
 
-    public void setChannel(){
+    public void setChannel() {
         channel.inputFileName = "topology";
         channel.outputFileName = "";
         try {
@@ -90,7 +90,7 @@ public class Controller {
         Thread.sleep(1000);
         System.out.println();
         Controller controller = new Controller(duration);
-        for(int i=0;i< controller.duration;i++){
+        for (int i = 0; i < controller.duration; i++) {
             controller.sendToNeighboursData();
             Thread.sleep(1000);
         }

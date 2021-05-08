@@ -14,21 +14,21 @@ public class Node {
 
     private static final Logger LOGGER = Logger.getLogger("Node");
 
-    public Node(int ID, int duration, int dest, String message){
+    public Node(int ID, int duration, int dest, String message) {
         this.ID = ID;
         this.duration = duration;
         this.dest = dest;
         this.message = message;
     }
 
-    public Node(){
+    public Node() {
         this.ID = -1;
         this.duration = 0;
         this.dest = -1;
         this.message = "";
     }
 
-    private void setChannel(){
+    private void setChannel() {
         channel.inputFileName = "input_" + this.ID;
         channel.outputFileName = "output_" + this.ID;
         channel.receivedFileName = this.ID + "_received";
@@ -41,9 +41,9 @@ public class Node {
         }
     }
 
-    public void helloProtocol(){
+    public void helloProtocol() {
         try {
-            channel.output.write("Hello "+this.ID);
+            channel.output.write("Hello " + this.ID);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

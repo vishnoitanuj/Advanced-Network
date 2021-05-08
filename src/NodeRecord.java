@@ -1,4 +1,3 @@
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -10,17 +9,17 @@ public class NodeRecord {
     public int nodeNotResponding[];
 
 
-    public NodeRecord(){
+    public NodeRecord() {
         numNodes = 0;
         topologyLinks = new int[numNodes][numNodes];
         nodeNotResponding = new int[numNodes];
     }
 
-    public void createChannels(){
+    public void createChannels() {
         channels = new FileDescriptor[numNodes];
-        for(int i=0;i<numNodes;i++){
-            channels[i].inputFileName = "output_"+i;
-            channels[i].outputFileName = "input_"+i;
+        for (int i = 0; i < numNodes; i++) {
+            channels[i].inputFileName = "output_" + i;
+            channels[i].outputFileName = "input_" + i;
 
             try {
                 channels[i].input = new FileReader(channels[i].inputFileName);
