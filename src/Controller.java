@@ -1,73 +1,99 @@
-package com.company;
-
-import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller {
+    private int duration;
+    private FileDescriptor channel;
+    private NodeRecord nodes;
 
-    //Hash map set-up for topology file
-    HashMap<String, Set<String>> map = new HashMap<>();
+    private static final Logger LOGGER = Logger.getLogger("Controller");
 
-    //Hash map set up for Buffered reader
-    HashMap<String, BufferedReader> inputStreams = new HashMap<>();
-
-    //Hash map set up for BufferWriter
-    HashMap<String, BufferedWriter> outputStreams = new HashMap<>();
-
-    private void createStreams() throws IOException {
-
-            //For Nodes to read output file
-        for (String node : map.keySet()) {
-            System.out.println(node);
-            BufferedReader reader =
-                    new BufferedReader(new FileReader("src/files/output_"+node));
-
-
-            // Initializing BufferedWriter
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/files/input_2"+node));
-                inputStreams.put(node,reader);
-                outputStreams.put(node,bufferedWriter);
-        }
-        System.out.println(inputStreams);
-        System.out.println(outputStreams);
+    public Controller(int duration) {
+        this.duration = duration;
+        setChannel();
+        createNodeChannels();
     }
 
+    public void parseString(String line) {
+        int sourceNode = Integer.parseInt(line.split("\\s")[0]);
+        int destNode = Integer.parseInt(line.split("\\s")[2]);
 
+        if (sourceNode > nodes.numNodes || destNode > nodes.numNodes) {
+            if (sourceNode > destNode)
+                nodes.numNodes = sourceNode;
+            else
+                nodes.numNodes = destNode;
+        }
 
-    private void readTopology() throws Exception {
-        BufferedReader reader =
-                new BufferedReader(new FileReader("src/topology"));
+        nodes.topologyLinks[sourceNode][destNode] = 1;
+    }
+
+    public void createNodeChannels(){
         String line;
-        while ((line = reader.readLine()) != null) {
-            String[] splitLine = line.split(" ");
-            if (map.containsKey(splitLine[0])) {
-                map.get(splitLine[0]).add(splitLine[1]);
-            } else {
-                HashSet<String> h = new HashSet<String>();
-                h.add(splitLine[1]);
-                map.put(splitLine[0], h);
-
+        BufferedReader reader = new BufferedReader(channel.input);
+        try {
+            while ((line = reader.readLine()) != null) {
+                parseString(line);
             }
-
-            // System.out.println(line.split(" ")[0]);
-            // System.out.println(line.split(" ")[1]);
-
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        // System.out.println(map);
-
-
+        nodes.createChannels();
     }
 
+    public void setChannel(){
+        channel.inputFileName = "topology";
+        channel.outputFileName = "";
+        try {
+            channel.input = new FileReader(channel.inputFileName);
+        } catch (FileNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Unable to read topology file");
+        }
+    }
+
+    public void sendToNeighboursData() {
+        for (int i = 0; i < nodes.numNodes; i++) {
+            try {
+                BufferedReader reader = new BufferedReader(nodes.channels[i].input);
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    for (int j = 0; j < nodes.numNodes; j++) {
+                        if (nodes.topologyLinks[i][j] == 1) {
+                            try {
+                                nodes.channels[i].output.write(line);
+                            } catch (Exception e) {
+                                LOGGER.log(Level.SEVERE, "Error in writing line = " + line + " to output file - " + nodes.channels[i].outputFileName);
+                            } finally {
+                                nodes.channels[i].output.close();
+                                nodes.channels[i].output.flush();
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public static void main(String[] args) throws Exception {
-        Controller controller = new Controller();
-        controller.readTopology();
-        controller.createStreams();
+        if (args.length != 2) {
+            LOGGER.severe(() -> "Need two arguments");
+            System.exit(0);
+        }
 
+        int duration = Integer.parseInt(args[1]);
+
+        Thread.sleep(1000);
+        System.out.println();
+        Controller controller = new Controller(duration);
+        for(int i=0;i< controller.duration;i++){
+            controller.sendToNeighboursData();
+            Thread.sleep(1000);
+        }
+        System.out.println("Controller Done");
     }
-
 }
-

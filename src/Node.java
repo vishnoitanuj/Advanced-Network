@@ -1,11 +1,8 @@
-package com;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Node {
     public int ID;
@@ -14,6 +11,7 @@ public class Node {
     public String message;
 
     private FileDescriptor channel;
+
     private static final Logger LOGGER = Logger.getLogger("Node");
 
     public Node(int ID, int duration, int dest, String message){
@@ -23,29 +21,38 @@ public class Node {
         this.message = message;
     }
 
-    private void setChannels() {
+    public Node(){
+        this.ID = -1;
+        this.duration = 0;
+        this.dest = -1;
+        this.message = "";
+    }
+
+    private void setChannel(){
+        channel.inputFileName = "input_" + this.ID;
+        channel.outputFileName = "output_" + this.ID;
+        channel.receivedFileName = this.ID + "_received";
+
         try {
-            File resultsDirectory = new File(OUTPUT_DIRECTORY);
-            if (!resultsDirectory.exists()) {
-                resultsDirectory.mkdir();
-            }
-
-            //FILES CREATED BY NODE
-            File inputFile = new File(OUTPUT_DIRECTORY + "input_" + nodeId);
-            
-            File outputFile = new File(OUTPUT_DIRECTORY + "output_" + nodeId);
-            File receivedFile = new File(OUTPUT_DIRECTORY + nodeId + "_received");
-
-            inputFile.createNewFile();
-            outputFile.createNewFile();
-            receivedFile.createNewFile();
-
-            inputFile = new BufferedReader(new FileReader(inputFile));
-            outputFile = new BufferedWriter(new FileWriter(outputFile, true));
-            receivedFile = new BufferedWriter(new FileWriter(receivedFile));
-
+            channel.input = new FileReader(channel.inputFileName);
+            channel.output = new FileWriter(channel.outputFileName);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, e, () -> "Exception in creating files");
+        }
+    }
+
+    public void helloProtocol(){
+        try {
+            channel.output.write("Hello "+this.ID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                channel.output.close();
+                channel.output.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
