@@ -47,7 +47,7 @@ public class Controller {
     }
 
     public void setChannel() {
-        channel.inputFileName = "src/topology";
+        channel.inputFileName = "topology";
         channel.outputFileName = "";
         try {
             channel.input = new FileReader(channel.inputFileName);
@@ -57,7 +57,7 @@ public class Controller {
     }
 
     public void sendToNeighboursData() {
-        for (int i = 0; i < nodes.numNodes; i++) {
+        for (int i = 0; i <= nodes.numNodes; i++) {
             try {
                 BufferedReader reader = new BufferedReader(nodes.channels[i].input);
                 String line = "";

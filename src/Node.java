@@ -19,6 +19,8 @@ public class Node {
         this.duration = duration;
         this.dest = dest;
         this.message = message;
+        channel = new FileDescriptor();
+        setChannel();
     }
 
     public Node() {
@@ -51,13 +53,12 @@ public class Node {
                 channel.output.close();
                 channel.output.flush();
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 4 || args.length > 5) {
+        if (!(args.length == 4 || args.length == 3)) {
             LOGGER.severe(() -> "Incorrect Arguments");
             System.exit(0);
         }

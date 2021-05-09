@@ -20,7 +20,7 @@ public class NodeRecord {
 
     public void createChannels() {
         channels = new FileDescriptor[10];
-        for (int i = 0; i < numNodes; i++) {
+        for (int i = 0; i < channels.length; i++) {
             channels[i] = new FileDescriptor();
             channels[i].inputFileName = "output_" + i;
             channels[i].outputFileName = "input_" + i;
