@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,15 +69,18 @@ public class Controller {
                                 nodes.channels[i].output.write(line);
                             } catch (Exception e) {
                                 LOGGER.log(Level.SEVERE, "Error in writing line = " + line + " to output file - " + nodes.channels[i].outputFileName);
-                            } finally {
-                                nodes.channels[i].output.close();
-                                nodes.channels[i].output.flush();
                             }
                         }
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    nodes.channels[i].output.close();
+                } catch (IOException e) {
+                    LOGGER.warning("Unable to close stream "+nodes.channels[i].outputFileName);
+                }
             }
         }
     }

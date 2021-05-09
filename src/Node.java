@@ -51,8 +51,8 @@ public class Node {
         } finally {
             try {
                 channel.output.close();
-                channel.output.flush();
             } catch (IOException e) {
+                LOGGER.warning("Unable to close "+channel.outputFileName);
             }
         }
     }
