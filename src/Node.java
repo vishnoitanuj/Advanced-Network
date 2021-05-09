@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,7 +37,18 @@ public class Node {
         channel.receivedFileName = this.ID + "_received";
 
         try {
+            File inputFile = new File(channel.inputFileName);
+            if(inputFile.createNewFile())
+                LOGGER.info(channel.inputFileName+" file created");
+            else
+                LOGGER.info(channel.inputFileName+" file already exists");
             channel.input = new FileReader(channel.inputFileName);
+
+            File outFile = new File(channel.inputFileName);
+            if(outFile.createNewFile())
+                LOGGER.info(channel.outputFileName+" file created");
+            else
+                LOGGER.info(channel.outputFileName+" file already exists");
             channel.output = new FileWriter(channel.outputFileName);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, e, () -> "Exception in creating files");
