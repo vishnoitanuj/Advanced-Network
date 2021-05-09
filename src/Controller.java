@@ -13,13 +13,15 @@ public class Controller {
 
     public Controller(int duration) {
         this.duration = duration;
+        this.channel = new FileDescriptor();
+        nodes = new NodeRecord();
         setChannel();
         createNodeChannels();
     }
 
     public void parseString(String line) {
         int sourceNode = Integer.parseInt(line.split("\\s")[0]);
-        int destNode = Integer.parseInt(line.split("\\s")[2]);
+        int destNode = Integer.parseInt(line.split("\\s")[1]);
 
         if (sourceNode > nodes.numNodes || destNode > nodes.numNodes) {
             if (sourceNode > destNode)
@@ -45,7 +47,7 @@ public class Controller {
     }
 
     public void setChannel() {
-        channel.inputFileName = "topology";
+        channel.inputFileName = "src/topology";
         channel.outputFileName = "";
         try {
             channel.input = new FileReader(channel.inputFileName);
