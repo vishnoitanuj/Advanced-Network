@@ -82,12 +82,12 @@ public class Controller {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
+        if (args.length != 1) {
             LOGGER.severe(() -> "Need two arguments");
             System.exit(0);
         }
 
-        int duration = Integer.parseInt(args[1]);
+        int duration = Integer.parseInt(args[0]);
 
         Thread.sleep(1000);
         System.out.println();
